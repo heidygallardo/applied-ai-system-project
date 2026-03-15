@@ -7,10 +7,35 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+classes included:
+1. Owner
+    - Stores owner information (name, availability, preferences)
+    - Manages pets (add, edit, remove, view)
+    - Can view all pets and all tasks across pets
+
+2. Pet 
+    - Stores pet info (name, species, age)
+    - manages tasks for that ped (add, edit, remove, view tasks)
+
+3. Task
+    - Respresents a single p;et care activity
+    - stores task details (name, duration, priority, category, completion status)
+    - allow updating task details or marking the task complete
+
+4. Scheduler
+    - Generates the daily care plan
+    - Organizes tasks based on priority and available time
+    - Filters tasks to fit constraints
+    - Produces the schedule and explanation of the plan
+
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
+    - Yes I changed the name of my class from tasks to task, task made more sense for my
+        use case.
+    - I added a frequency attribute to my Task class to keep track of how frequent task needs to be done. I was initially not tracking that.
 
 ---
 

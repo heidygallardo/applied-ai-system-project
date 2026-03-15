@@ -12,19 +12,30 @@ class Task:
     duration: int          # minutes
     priority: str          # "low" | "medium" | "high"
     category: str
+    frequency: str = "once"   # "once" | "daily" | "weekly" | "monthly"
     completed: bool = False
 
     def update_priority(self, new_priority: str) -> None:
-        pass
+        self.priority = new_priority
 
     def update_duration(self, new_duration: int) -> None:
-        pass
+        self.duration = new_duration
+
+    def update_frequency(self, new_frequency: str) -> None:
+        self.frequency = new_frequency
 
     def mark_complete(self) -> None:
-        pass
+        self.completed = True
 
     def get_task_info(self) -> dict:
-        pass
+        return {
+            "name": self.name,
+            "duration": self.duration,
+            "priority": self.priority,
+            "category": self.category,
+            "frequency": self.frequency,
+            "completed": self.completed,
+        }
 
 
 @dataclass
@@ -35,16 +46,19 @@ class Pet:
     tasks: list[Task] = field(default_factory=list)
 
     def add_task(self, task: Task) -> None:
-        pass
+        self.tasks.append(task)
 
     def edit_task(self, task_name: str, **updates) -> None:
-        pass
+        for task in self.tasks:
+            if task.name == task_name:
+                for key, value in updates.items():
+                    setattr(task, key, value)
 
     def remove_task(self, task_name: str) -> None:
-        pass
+        self.tasks = [task for task in self.tasks if task.name != task_name]
 
     def get_tasks(self) -> list[Task]:
-        pass
+        return self.tasks
 
 
 # ---------------------------------------------------------------------------
