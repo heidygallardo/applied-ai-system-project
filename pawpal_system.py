@@ -73,19 +73,22 @@ class Owner:
         self.pets: list[Pet] = []
 
     def add_pet(self, pet: Pet) -> None:
-        pass
+        self.pets.append(pet)
 
     def edit_pet(self, pet_name: str, **updates) -> None:
-        pass
+        for pet in self.pets:
+            if pet.name == pet_name:
+                for key, value in updates.items():
+                    setattr(pet, key, value)
 
     def remove_pet(self, pet_name: str) -> None:
-        pass
+        self.pets = [pet for pet in self.pets if pet.name != pet_name]
 
     def view_pets(self) -> list[Pet]:
-        pass
+        return self.pets
 
     def view_all_tasks(self) -> list[Task]:
-        pass
+        return [task for pet in self.pets for task in pet.get_tasks()]
 
 
 class Scheduler:
@@ -96,16 +99,42 @@ class Scheduler:
         self.explanation: str = ""
 
     def generate_plan(self) -> None:
-        pass
+        sorted_tasks = self.sort_tasks_by_priority()
+        self.daily_plan = self.filter_tasks_by_time(sorted_tasks)
+        self.explanation = self.build_explanation()
 
     def sort_tasks_by_priority(self) -> list[Task]:
-        pass
+        order = {"high": 0, "medium": 1, "low": 2}
+        return sorted(self.tasks, key=lambda t: order.get(t.priority, 3))
 
-    def filter_tasks_by_time(self) -> list[Task]:
-        pass
+    def filter_tasks_by_time(self, sorted_tasks: list[Task]) -> list[Task]:
+        total_available = sum(self.availability)
+        plan, time_used = [], 0
+        for task in sorted_tasks:
+            if not task.completed and time_used + task.duration <= total_available:
+                plan.append(task)
+                time_used += task.duration
+        return plan
 
     def build_explanation(self) -> str:
-        pass
+        if not self.daily_plan:
+            return "No tasks scheduled."
+        
+        total_available = sum(self.availability)
+        total_used = sum(t.duration for t in self.daily_plan)
+        skipped = [t for t in self.tasks if t not in self.daily_plan and not t.completed]
+
+        lines = [f"- {t.name}: selected because it has {t.priority} priority ({t.duration} min)" for t in self.daily_plan]
+
+        if skipped:
+            skip_lines = [f"- {t.name}: skipped (not enough remaining time or lower priority)" for t in skipped]
+            lines += ["\nSkipped:"] + skip_lines
+
+        return (
+            f"Plan uses {total_used} of {total_available} available minutes.\n"
+            f"Tasks were sorted by priority (high → medium → low), then fit into available time:\n"
+            + "\n".join(lines)
+        )
 
     def get_plan(self) -> dict:
-        pass
+        return {"daily_plan": self.daily_plan, "explanation": self.explanation}
