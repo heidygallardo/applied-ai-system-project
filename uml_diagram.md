@@ -8,7 +8,7 @@ classDiagram
         +edit_pet()
         +remove_pet()
         +view_pets()
-        +view_all_tasks()
+        +view_all_tasks() list[Task]
     }
 
     class Pet {
@@ -16,10 +16,10 @@ classDiagram
         +species: string
         +age: int
         +tasks: list[Task]
-        +add_task()
-        +edit_task()
-        +remove_task()
-        +get_tasks()
+        +add_task(task: Task)
+        +edit_task(task_name: str)
+        +remove_task(task_name: str)
+        +get_tasks() list[Task]
     }
 
     class Task {
@@ -27,26 +27,32 @@ classDiagram
         +duration: int
         +priority: string
         +category: string
+        +frequency: string
         +completed: bool
+        +time: string
         +update_priority()
         +update_duration()
+        +update_frequency()
         +mark_complete()
-        +get_task_info()
+        +get_task_info() dict
     }
 
     class Scheduler {
         +tasks: list[Task]
-        +availability: list
-        +daily_plan: list
+        +availability: list[int]
+        +daily_plan: list[Task]
         +explanation: string
         +generate_plan()
-        +sort_tasks_by_priority()
-        +filter_tasks_by_time()
-        +build_explanation()
-        +get_plan()
+        +sort_tasks_by_priority() list[Task]
+        +sort_tasks_by_time() list[Task]
+        +filter_tasks_by_time(sorted_tasks) list[Task]
+        +filter_tasks_by_status(completed: bool) list[Task]
+        +detect_conflicts() list[str]
+        +build_explanation() str
+        +get_plan() dict
+        -_to_minutes(time_str) int
     }
 
-    Owner --> Pet : owns (1..*)
-    Pet --> Task : has (1..*)
-    Scheduler --> Task : manages
-    Scheduler --> Owner : uses availability
+    Owner "1" *-- "1..*" Pet : owns
+    Pet "1" *-- "1..*" Task : owns
+    Scheduler ..> Task : uses

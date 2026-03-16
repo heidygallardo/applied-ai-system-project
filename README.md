@@ -42,6 +42,21 @@ pip install -r requirements.txt
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
 
+## Demo
+
+<a href="pawpal-ss.png" target="_blank"><img src='pawpal-ss.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>.
+<a href="pawpal-ss2.png" target="_blank"><img src='pawpal-ss2.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>.
+
+## Features
+
+- **Priority-based scheduling** — Tasks are sorted high → medium → low and greedily packed into available time, so the most important care tasks always make the daily plan first
+- **Chronological sorting** — Tasks can be viewed in earliest-to-latest order using HH:MM start times converted to integer minutes for accurate comparison
+- **Time-window conflict detection** — Every pair of tasks is checked for overlap using interval arithmetic (`A.start < B.end AND B.start < A.end`), returning a warning message for each conflicting pair
+- **Status filtering** — Tasks can be filtered to show only pending or only completed items, making it easy to track what still needs to be done
+- **Available-time budgeting** — The scheduler sums total available minutes and skips tasks that would exceed the budget, preventing an overloaded schedule
+- **Recurring task frequency** — Each task stores a frequency (`once`, `daily`, `weekly`, `monthly`) for future scheduling logic
+- **Plan explanation** — After generating a plan, the scheduler produces a plain-English summary of which tasks were selected, why they were prioritized, and which were skipped due to time constraints
+
 ## Smarter Scheduling
 
 The newly added features are as follows:
