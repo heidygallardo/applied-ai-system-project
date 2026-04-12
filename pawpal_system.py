@@ -234,3 +234,39 @@ class Scheduler:
         """Return the daily plan and explanation as a dictionary."""
 
         return {"daily_plan": self.daily_plan, "explanation": self.explanation}
+
+    
+    # final project addition 
+    def get_skipped_tasks(self) -> list[Task]:
+
+        """Return incomplete tasks that were not included in the daily plan"""
+
+        return [t for t in self.tasks if t not in self.daily_plan and not t.completed]
+
+    def get_critical_skipped_tasks(self) -> list[Task]:
+
+        """Return skipped tasks with high priority."""
+        return [t for t in self.get_skipped_tasks() if t.priority == "high"]
+    
+
+    def get_schedule_summary(self) -> dict: 
+
+        """Return a summary of the generated plan for AI review"""
+
+        def format_task(task):
+
+            return {
+                "name": task.name,
+                "duration": task.duration,
+                "priority": task.priority,
+                "category": task.category, 
+                "time": task.time
+            }
+        return {
+            "available_time": sum(self.availability),
+            "scheduled_tasks": [format_task(task) for task in self.daily_plan],
+            "skipped_tasks": [format_task(task) for task in self.get_skipped_tasks()],
+            "critical_skipped_tasks": [
+            format_task(task) for task in self.get_critical_skipped_tasks()
+            ],
+        }

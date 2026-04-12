@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+# Added parent directory to path so pawpal_system can be imported
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from pawpal_system import Task, Pet, Owner, Scheduler
 
 # Chronological Sort: Verify that sort_tasks_by_time() returns tasks in earliest-first order.
@@ -57,6 +63,46 @@ def test_mark_complete_changes_status():
     assert task.completed == False
     task.mark_complete()
     assert task.completed == True
+
+# Skipped Tasks: Verify that get_skipped_tasks returns only incomplete tasks excluded from the daily plan.
+def test_get_skipped_tasks_returns_tasks_not_in_plan():
+    # Arrange — tight availability so only the high-priority task fits
+    high = Task(name="Morning Feed",  duration=10, priority="high",   category="feeding",  time="07:30")
+    low  = Task(name="Evening Walk",  duration=30, priority="low",    category="exercise", time="18:00")
+    done = Task(name="Afternoon Nap", duration=60, priority="medium", category="rest",     time="13:00")
+    done.mark_complete()
+    scheduler = Scheduler(tasks=[high, low, done], availability=[10])  # only 10 min available
+
+    # Act
+    scheduler.generate_plan()
+    result = scheduler.get_skipped_tasks()
+
+    # Assert — low-priority task is skipped; completed task is excluded
+    assert low in result
+    assert high not in result   # high fits in the plan
+    assert done not in result   # already completed, not a "skipped" task
+
+
+# Critical Skipped Tasks: Verify that get_critical_skipped_tasks returns only high-priority skipped tasks.
+def test_get_critical_skipped_tasks_returns_only_high_priority():
+    # Arrange — availability only fits the medium task; high and low are left out
+    medium = Task(name="Grooming",     duration=20, priority="medium", category="grooming", time="10:00")
+    high   = Task(name="Vet Visit",    duration=60, priority="high",   category="health",   time="09:00")
+    low    = Task(name="Evening Walk", duration=30, priority="low",    category="exercise", time="18:00")
+    done   = Task(name="Morning Feed", duration=10, priority="high",   category="feeding",  time="07:00")
+    done.mark_complete()
+    scheduler = Scheduler(tasks=[medium, high, low, done], availability=[20])  # only 20 min available
+
+    # Act
+    scheduler.generate_plan()
+    result = scheduler.get_critical_skipped_tasks()
+
+    # Assert — only the skipped high-priority task appears
+    assert high in result
+    assert low not in result     # skipped but not high priority
+    assert medium not in result  # was included in the plan
+    assert done not in result    # completed tasks are excluded
+
 
 # Task Addition: Verify that adding a task to a Pet increases that pet's task count.
 def test_add_task_increases_count():
