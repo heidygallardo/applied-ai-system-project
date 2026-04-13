@@ -1,5 +1,12 @@
 # TF WEEKLY TASKS SUMMARY 
 
+For this project a core concept students need to understand is how to add AI features to their project to make it more advanced. Another main takeaway is for them to make design choices and be able to explain why they decided to build what they are building. 
+
+Students are most likely to struggle in identifying how to extend their project and integrate one of the features to it in a meaningful way rather than adding AI as a standalone component. For this project I did think of other ways to extend it in case students ask for examples. I was also thinking that for Pawpa+ I could incorporate a retrieval-based system to look up pet care guidelines before making recommendations, or evolve into a more agentic workflow where the AI not only suggests a better plan but automatically adjusts the schedule. 
+
+AI was helpful when brainstorming improvements and refining prompt logic, but it was sometimes misleading by producing responses that sounded correct while being logically inconsistent. 
+
+One way I would guide a student without giving the answer is by asking questions like, “Where in your system does this AI feature actually belong?” or “How does this change what your system does?” This encourages them to think about how they are extending their system and whether the AI is meaningfully integrated into the main logic.
 
 # Pawpal+ AI Scheduler
 
