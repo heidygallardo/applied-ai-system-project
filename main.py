@@ -1,4 +1,5 @@
 from pawpal_system import Task, Pet, Owner, Scheduler
+from ai_reviewer import AIReviewer
 
 # --- Create owner ---
 owner = Owner(name="Heidy", availability=[90])  # 90 minutes available today
@@ -31,6 +32,11 @@ scheduler.generate_plan()
 # each Task has: .name (str), .duration (int), .priority (str), .category (str), .frequency (str), .completed (bool)
 plan = scheduler.get_plan()
 
+summary = scheduler.get_schedule_summary()
+reviewer = AIReviewer()
+ai_review = reviewer.review(summary)
+
+
 total = sum(t.duration for t in plan["daily_plan"])
 available = sum(owner.availability)
 
@@ -60,6 +66,30 @@ print(f"  Total scheduled: {total} / {available} min")
 print("\n  WHY THIS PLAN:")
 print(plan["explanation"])
 print("╚══════════════════════════════════════════════╝")
+
+print("\n╔══════════════════════════════════════════════╗")
+print("║                 AI REVIEW                    ║")
+print("╚══════════════════════════════════════════════╝")
+
+print(f"\n  Assessment: {ai_review['assessment']}")
+
+print("\n  Critical Issues:")
+if ai_review["critical_issues"]:
+    for issue in ai_review["critical_issues"]:
+        print(f"  - {issue}")
+else:
+    print("  - None")
+
+print("\n  Recommended Order:")
+for i, task_name in enumerate(ai_review["recommended_order"], start=1):
+    print(f"  {i}. {task_name}")
+
+print("\n  Recommendations:")
+if ai_review["recommendations"]:
+    for rec in ai_review["recommendations"]:
+        print(f"  - {rec}")
+else:
+    print("  - None")
 
 # --- Demo: sort_tasks_by_time ---
 print("\n╔══════════════════════════════════════════════╗")

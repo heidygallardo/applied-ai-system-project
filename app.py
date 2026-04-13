@@ -1,4 +1,5 @@
 import streamlit as st
+from ai_reviewer import AIReviewer
 from pawpal_system import Task, Pet, Owner, Scheduler
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
@@ -99,7 +100,16 @@ if st.session_state.owner:
             if all_tasks:
                 scheduler = Scheduler(tasks=all_tasks, availability=st.session_state.owner.availability)
                 scheduler.generate_plan()
-                st.session_state.plan = scheduler.get_plan()
+
+                plan = scheduler.get_plan()
+                summary = scheduler.get_schedule_summary()
+                reviewer = AIReviewer()
+                ai_review = reviewer.review(summary)
+
+                st.session_state.plan = plan
+                st.session_state.ai_review = ai_review
+
+
             else:
                 st.warning("Add at least one task before generating a schedule.")
 
@@ -111,3 +121,28 @@ if st.session_state.owner:
             st.divider()
             st.markdown("**Why this plan:**")
             st.text(plan["explanation"])
+
+
+            st.markdown("### AI REVIEW")
+            st.markdown(f"Assessment: {ai_review['assessment']}")
+            st.markdown("Critical Issues:")
+
+            if ai_review["critical_issues"]:
+
+                for issue in ai_review["critical_issues"]:
+                    st.write(f"- {issue}")
+
+            else:
+                st.write("- None")
+
+            st.markdown("**Recommended Order:**")
+            for i, task_name in enumerate(ai_review["recommended_order"], start=1):
+                st.write(f"{i}. {task_name}")
+
+            st.markdown("**Recommendations:**")
+            if ai_review["recommendations"]:
+                for rec in ai_review["recommendations"]:
+                    st.write(f"- {rec}")
+            else:
+                st.write("- None")
+
