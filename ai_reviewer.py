@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 import json
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -8,6 +10,7 @@ class AIReviewer:
         self.client = OpenAI()
 
     def review(self, summary: dict) -> dict:
+        logger.info('Starting AI review...')
         prompt = f"""
         You are an AI schedule review assistant for a pet care planning app.
 
@@ -59,10 +62,15 @@ class AIReviewer:
         )
 
         content = response.choices[0].message.content
+        
+        logging.info("AI response received.")
 
         try:
-            return json.loads(content)
+            parsed = json.loads(content)
+            logging.info('AI response parsed successfully')
+            return parsed
         except json.JSONDecodeError:
+            logging.error('Failed to parse AI response as JSON')
             raise ValueError(f'Invalid JSON returned by AI: {content}')
 
 

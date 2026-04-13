@@ -1,5 +1,11 @@
 from pawpal_system import Task, Pet, Owner, Scheduler
 from ai_reviewer import AIReviewer
+import logging 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 # --- Create owner ---
 owner = Owner(name="Heidy", availability=[90])  # 90 minutes available today
